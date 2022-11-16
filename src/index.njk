@@ -21,7 +21,7 @@ pagination:
         <div class="flex justify-between">
           <a class="text-lg font-semibold hover:text-teal-600 hover:underline" href="{{ post.url }}">{{ post.data.title }}</a>
           <p class="text-xs font-semibold">
-            Posted {{post.data.date.toLocaleString()}}
+            Posted {{post.data.date.toLocaleString("en-us", {timeZone: "America/Chicago", timeZoneName: "short"})}}
           </p>
         </div>
         <p class="text-xs italic text-gray-400">{{post.data.summary}}</p>

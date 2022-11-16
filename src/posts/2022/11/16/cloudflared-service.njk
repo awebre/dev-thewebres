@@ -1,0 +1,63 @@
+---
+layout: posts
+title: "Cloudflared as a Service"
+date: 2022-11-16T12:10:00-6:00
+summary: 
+  A short tutorial on setting up Cloudflared as a service.
+tags:
+  - post
+---
+<section>
+    <h3 class="text-lg font-bold">A Quick Prologue</h3>
+    <p>
+        Previously, I attempted to get Cloudflare Tunnels running on a Le Potato,
+        so that I could SSH into it from anywhere. Once I had that working, I quickly realized 
+        one major flaw in my plan: if Le Potato restarted for any reasonable
+        my tunnel would go down and I would be locked out!
+    </p>
+    <br/>
+    <p>
+        Thankfully, the wonderful people at Cloudflare were already one step ahead of me. To 
+        fix just this scenario, they have commands built-in to "cloudflared", that will allow 
+        you to run your tunnels as a service. This means that any time the machine boots up, 
+        it will be available via the tunnel.
+    </p>
+    <br/>
+    <p>This setup is pretty quick, so let's get started.</p>
+</section>
+<section class="mt-8">
+    <h3 class="text-lg font-bold">Cloudflare Tunnels as a Service</h3>
+    <aside class="text-sm italic text-gray-500">
+        Note: This tutorial assumes you 
+        <a class="text-teal-500 hover:text-teal-600 hover:underline" href="/posts/2022/11/15/lepotato-tunnel/">already have a cloudflare tunnel configured.</a>
+    </aside>
+    <br/>
+    <p>
+        First, install the cloudflare service:
+    <p>
+    <code class="text-white bg-black p-0.5">cloudflared service install</code>
+    <br/>
+    <br/>
+    <p>Next, start the service:</p>
+    <code class="text-white bg-black p-0.5">systemctl start cloudflared</code>
+    <br/>
+    <br/>
+    <p>Now, to be sure that everything is setup correctly, you'll want to run the following command:</p>
+    <code class="text-white bg-black p-0.5">systemctrl status cloudflared</code>
+    <br/>
+    <br/>
+    <p>
+        If you don't get an error message (and instead see something like "Status: active"), then you 
+        should be good to go. If you're brave, you might even run a reboot and see what happens!
+    </p>
+    <br/>
+    <code class="text-white bg-black p-0.5">reboot</code>
+    <br/>
+    <br/>
+    <p>
+        In my case, I decided to run the reboot command from a remote instance, while I was 
+        far away from home (where Le Potato lives). It was an agonizing few seconds while I waited
+        for the system to boot back up and connect via the tunnel, but it did eventually re-connect!
+        <em>On the first try!</em>
+    </p>
+</section>
