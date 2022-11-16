@@ -7,7 +7,7 @@ layout: default
         <h1 class="text-3xl font-bold">{{title}}</h1>
         <div class="flex justify-between">
             <p class="text-sm italic text-gray-400">{{summary}}</p>
-            <p class="text-sm text-gray-400">{{date.toLocaleString()}}</p>
+            <p class="text-sm text-gray-400">{{date.toLocaleString("en-us", {timeZone: "America/Chicago", timeZoneName: "short"})}}</p>
         </div>
         <hr class="mt-2 mb-8" />
         {{content | safe}}
