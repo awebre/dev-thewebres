@@ -4,6 +4,8 @@ title: "Tunneling to Le Potato with Cloudflare"
 date: 2022-11-15T22:45:00-6:00
 summary: 
   Exposing a potato over the internet, with care.
+tags:
+  - post
 ---
 
 <section>
@@ -72,5 +74,47 @@ summary:
     <p>If all is well, you should see your tunnel's name in the list, along with some other information.</p>
     <br/>
     <p>
-        Lastly, you'll need
+        Lastly, you'll need to add a config file at "home/ubuntu/.cloudflared/config.yml" that looks like this:
+    </p>
+    <pre><code class="text-white bg-black p-0.5">tunnel: ~your-tunnel-guid-from-earlier~
+credentials-file: home/ubuntu/.cloudflared/~your-tunnel-guid-from-earlier~.json
+        
+ingress:
+    - hostname: subdomain.yourdomain.net
+      service: ssh://localhost:22
+    - service: http_status:404</code></pre>
+    <br/>
+    <br/>
+    <p>
+        This config exposes ssh over the Cloudflare tunnel and returns 404 for any requests to the tunnel
+        that do not match that SSH port (22).
+    </p>
+</section>
+<section class="mt-8">
+    <h3 class="text-lg font-bold">Cloudflare for Teams</h3>
+    <p>
+        The remaining part of this setup requires you to sign up for "Cloudflare for Teams". This part
+        is a bit of a mess, so I would recommend stepping throug Step #3 of 
+        <a class="text-teal-500 hover:tex-teal-600 hover:underline" href="https://blog.cloudflare.com/ssh-raspberry-pi-400-cloudflare-tunnel-auditable-terminal/">this Cloudflare blog</a>, 
+        which covers it pretty well. The basic idea is that you'll sign up, then create an application, which 
+        will allow you to define rules around who can access the tunnel.
+    </p>
+    <br/>
+    <p>
+        Once you've set up your application, it's time to hop back over to Le Potato and finish up the setup.
+    </p>
+    <br/>
+    <p>First you'll run:<p>
+    <code class="text-white bg-black p-0.5">cloudflared tunnel route dns ~your-guid~ subdomain.yourdomain.net</code>
+    <aside class="text-sm italic text-gray-500">This adds a CNAME record in cloudflare that will route back to the tunnel.</aside>
+    <br/>
+    <p>Then you should be ready to run your tunnel:</p>
+    <code class="text-white bg-black p-0.5">cloudflared tunnel run your-tunnel-name-here</code>
+    <br/>
+    <br/>
+    <p>
+        If all has gone according to plan, you should now be able to visit subdomain.yourdomain.net and see the Cloudflare Teams
+        authentication flow. Once you get past that, you should be able to enter your username and password to 
+        gain access to an SSH session on the server!
+    </p>
 </section>
