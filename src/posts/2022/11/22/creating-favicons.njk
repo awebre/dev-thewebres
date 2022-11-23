@@ -1,0 +1,44 @@
+---
+layout: posts
+title: "Favicon Generation with ImageMagick"
+date: 2022-11-22T20:58:00-6:00
+summary: 
+  "Some common tricks I've used for creating Favicons with ImageMagick"
+tags:
+  - post
+---
+<section>
+    <h3 class="text-lg font-bold">Common Image Manipulation Tricks</h3>
+    <br/>
+    <p>
+        Below are some quick tricks that can be used to manipulate images using 
+        <a class="text-teal-500 hover:text-teal-600 hover:underline" href="https://imagemagick.org/">ImageMagick</a>.
+    </p>
+    <br/>
+    <br/>
+    <p>
+        If you're looking to replace white areas with a translation:
+    </p>
+    <br/>
+    <code class="text-white bg-black p-0.5">convert ./incognitum_3.jpeg -fuzz 5% -transparent white incognitum_icon.png</code>
+    <br/>
+    <aside class="text-sm italic text-gray-500">
+        Tweak the "fuzz" argument until you get the right amount of white removal.
+    </aside>
+    <br/>
+    <p>
+        To create a scaled down version of any image:
+    </p>
+    <br/>
+    <code class="text-white bg-black p-0.5">convert favicon-256.png -resize 128x128 favicon-128.png</code>
+    <br/>
+    <aside class="text-sm italic text-gray-500">
+        This can be repeated for several resolutions until you have enough to generate a Favicon.
+    </aside>
+    <br/>
+    <p>
+        To create a favicon.ico from multiple source images:
+    </p>
+    <br/>
+    <code class="text-white bg-black p-0.5">convert favicon-16.png favicon-32.png favicon-64.png favicon-128.png favicon-256.png -colors 256 favicon.ico</code>
+</section>
