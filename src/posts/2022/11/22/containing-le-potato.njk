@@ -1,0 +1,122 @@
+---
+layout: posts
+title: "La Patate Est Confinée"
+date: 2022-11-22T18:41:00-6:00
+summary: 
+  "Le Potato meets Docker and gets contained. (Mésaventures de la Potate: Part 2)"
+tags:
+  - post
+---
+<section>
+  <h3 class="text-lg font-bold">Last Time on Misadventures of Le Potato...</h3>
+  <p>
+      Last we saw Le Potato, it had only just been made accessible 
+      to the broader internet. It was sitting there, cold and alone, at the edge 
+      of the universe, with no purpose and no one to talk to. But that is no way 
+      for a highly connected, sophisticated piece of hardware, such as Le Potato, to 
+      spend it's life. 
+  </p>
+  <br />
+  <p>
+      Such a device should be hosting database full of cat pictures, powering the 
+      Internet of Things™️, or connecting people across the vast reaches of the Fediverse. 
+      And such futuristic functions couldn't be possible without the latest and greatest 
+      in cloud-native software: Docker.
+  </p>
+</section>
+<section class="mt-8">
+  <h3 class="text-lg font-bold">Installing Docker and Docker Compose</h3>
+  <p>
+    Getting the Docker Engine installed is pretty straight forward. There are multiple great 
+    guides, but I found the 
+    <a class="text-teal-500 hover:text-teal-600 hover:underline" href="https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository"> official docs</a> and 
+    <a class="text-teal-500 hover:text-teal-600 hover:underline" href="https://www.linode.com/docs/guides/installing-and-using-docker-on-ubuntu-and-debian/">these from Linode</a> 
+    particularly helpful. Ultimately, it's just a few simple commands, which I will re-iterate here (from the official docs):
+  </p>
+  <br/>
+  <p>Update and install dependencies</p>
+  <pre><code class="text-white bg-black p-0.5">sudo apt-get update
+    
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release</code></pre>
+  <br/>
+  <br/>
+  <p>Add Docker's GPG Key:</p>
+  <pre><code class="text-white bg-black p-0.5">sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg</code></pre>
+  <br/>
+  <br/>
+  <p>Setup repository:</p>
+    <pre><code class="text-white bg-black p-0.5">echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null</code></pre>
+  <br/>
+  <br/>
+  <p>Update apt package index:</p>
+    <pre><code class="text-white bg-black p-0.5">sudo chmod a+r /etc/apt/keyrings/docker.gpg
+sudo apt-get update</code></pre>
+  <aside class="text-sm italic text-gray-500">Note: the chmod part of this may not be necessary, but it was for me.</aside>
+  <br/>
+  <p>
+    Finally, install Docker Engine, containerd, and Docker Compose:
+  </p>
+  <pre><code class="text-white bg-black p-0.5">sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin</code></pre>
+  <br/>
+  <br/>
+  <p>
+    That should be it! If you want to know if Docker Engine was successfully installed, it should be as easy as running 
+    <code class="text-white bg-black p-0.5">sudo docker run hello-world</code>, which will print a confirmation message 
+    if you have succeeded.
+  </p>
+</section>
+<section class="mt-8">
+  <h3 class="text-lg font-bold">Installing Mastodon and Editing the Docker Compose File</h3>
+  <p>
+    With Docker installed, it's time to get the Mastodon repository copied and set up Docker Compose. I have adapted 
+    this section from another 
+    <a class="text-teal-500 hover:text-teal-600 hover:underline" href="https://www.linode.com/docs/guides/install-mastodon-on-ubuntu-2004/#download-mastodon">linode article</a>, 
+    amended with advice from various other sources on the internet. The first part of this (installing mastodon) is pretty easy:
+  </p>
+  <code class="text-white bg-black p-0.5">git clone https://github.com/mastodon/mastodon.git</code>
+  <br/>
+  <br/>
+  <p>
+    The above command will clone the mastodon repository and put it in the "~/mastodon" folder. Now, you could make edits directly 
+    to the "docker-compose.yml" file that is in this folder, but that leaves you open to some possible issues. Primarily, if you update 
+    this repository in the future, you might accidentally overwrite the changes you have made. My recommendation would be to create a copy 
+    of that file (and maybe even check it in to your own repository). I'll just copy it for now:
+  </p>
+  <code class="text-white bg-black p-0.5">cp ./mastodon/docker-compose.yml ./docker-compose.yml</code>
+  <br/>
+  <br/>
+  <p>
+    Now we'll need to make some edits to our copy of the docker-compose.yml file. Comment out the lines that start with "build" by adding "#" in front, then change 
+    each instance of "image: tootsuite/mastodon" to point to a particular version (for example, "image: tootsuite/mastodon:v4.0.2"). Leaving the "latest" tag would mean 
+    automatically upgrading to the latest version of this image any time your app was restarted, which could cause serious issues. You can find the 
+    version number of the latest release (and all previous releases) <a class="text-teal-500 hover:text-teal-600 hover:underline" href="https://github.com/mastodon/mastodon/releases">on GitHub</a>.
+    As you're making these changes, it may be a good idea to add a "container_name" property to each service, so that you can see these names in any outputs (for example, 
+    I added "container_name: "postgres"" to the "db" section).
+  </p>
+  <br/>
+  <p>
+    The default docker-compose.yml file has some additional behavior that we'll want to tweak. Primarily, it allows unauthenticated access to the Postgres
+    database that it creates. We'll need to edit the "environment" section of "db" to look like this:
+  </p>
+  <pre><code class="text-white bg-black p-0.5"> environment:
+   POSTGRES_PASSWORD: your_secure_password_goes_here
+   POSTGRES_DB: your_mastodon_db_name
+   POSTGRES_USER: your_db_user_name</code>
+</section>
+<section class="mt-8">
+  <h3 class="text-lg font-bold">Setting Environment Variables</h3>
+  <p>
+    This is where we will depart from the Linode guide that I mentioned earlier. If you're setting up a brand new instance,
+    you should probably just refer directly to that guide. In my case, there is an existing server, whose configuration I need
+    to copy, by first going to my Cloudron dashboard and downloading the existing ".env.production" file. Once I had this file in 
+    hand, I copied it's values over to a .env.production file that lives next to my "docker-compose.yml".
+  <p>
+
+</section>
