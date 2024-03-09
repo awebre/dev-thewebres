@@ -1,0 +1,50 @@
+---
+layout: posts
+title: "A Clean Start: Dev Environment Setup with Winget"
+date: 2024-03-8T21:40:00-6:00
+summary: 
+  "Using Winget (Windows Package Manager) to automate dev box app installations."
+tags:
+  - post
+---
+<section>
+    <h3 class="text-lg font-bold">Time to Reformat</h3>
+    <br/>
+    <p>
+        Earlier this week, things started getting really strange on my work PC. Rider (THE best IDE for .NET, sorry Microsoft) 
+        stopped being able to open certain projects, Docker containers that I've been running for months stopped working, and things generally
+        just felt <i class="italic">off</i>. This particular PC was built back in 2019 and has been accruing cruft ever since. A recent inspection of 
+        disk space showed that I had nearly filled the 900 GB SSD, but with now one obvious culprit. It was just time. So I backed up relevant files and 
+        started reformatting the machine.
+    </p>
+    <br/>
+    <p>
+        A few hours later, I was staring at something I haven't seen in at least 2 years - a completely fresh OS install. My excitement was immediately replaced
+        with dread. How am I going to get myself back into state of any form of productivity? Enter 
+        <a href="https://github.com/microsoft/winget-cli" class="text-teal-500 hover:text-teal-600 hover:underline">winget</a>, the official Windows Package Manager.
+    </p>
+    <br/>
+    <p>
+        After scouring the internet for a few minutes, I came across various articles and GitHub Gists where people have put together their own personal lists of apps that
+        they like to have installed on their machines. So I copied the shell of those scripts to 
+        <a href="https://gist.github.com/awebre/ddb09cfe410e54985b38a5ca29f0612c" class="text-teal-500 hover:text-teal-600 hover:underline">my own GithHub Gist</a> 
+        and began working on building my list of apps. The process looked something like this:
+    </p>
+    <br/>
+    <p>
+        Start by searching <code class="text-white bg-black p-0.5">winget</code> for an app that you need. For example, I started with a search for Visual Studio Code with
+        something like
+    </p>
+    <br/>
+    <code class="text-white bg-black p-0.5">winget search "Visual Studio Code"</code>
+    <br/>
+    <br/>
+    <p>
+        This will return a powershell table of items, with an ID that will look someting like "Microsoft.VisualStudioCode". Add a new entry to the list of apps in the powershell 
+        script with the "Name" set to that ID.
+    </p>
+    <br/>
+    <p>
+        Once you've built up your list, run your powershell script and watch in wonder as all of your favorite apps are installed! Forgot something? Just search, add it in, and run it again!
+    </p>
+</section>

@@ -12,7 +12,7 @@ tags:
     <br/>
     <p>
         Azure Container Apps require an SNI/SSL Certificate to be bound in order for custom domain names to work. 
-        You can use Azure DNS Zones and <a href="">this helpful open source project</a> to create automatically 
+        You can use Azure DNS Zones and <a href="https://github.com/sjkp/letsencrypt-azure" class="text-teal-500 hover:text-teal-600 hover:underline">this helpful open source project</a> to create automatically 
         renewing certs via Let's Encrypt, but Azure DNS Zones cost money (as do the Azure Functions and other 
         resources required for the automatically renewing cert). Instead, I opted to use Cloudflare's free Origin Certificates, which 
         can be set to expire every 15 years and you can configure notifications for expiring certs.
